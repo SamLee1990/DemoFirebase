@@ -23,6 +23,8 @@ class LoginViewController: UIViewController {
     //Facebook
     var fbLoginButton = FBLoginButton()
     
+    var loadingView: UIView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //加入手勢，點擊收鍵盤
@@ -62,6 +64,7 @@ class LoginViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        setLoadingView(false)
         Auth.auth().removeStateDidChangeListener(handle!)
     }
     
@@ -73,6 +76,23 @@ class LoginViewController: UIViewController {
     
     @IBAction func dissmissKeyboardWithRegisterButton(_ sender: Any) {
         view.endEditing(true)
+    }
+    
+    func setLoadingView(_ status: Bool) {
+        if status {
+            //加入毛玻璃效果 xib
+            if let array = Bundle.main.loadNibNamed("LoadingView", owner: nil, options: nil) {
+                loadingView = array.first as? UIView
+                loadingView?.frame.origin = CGPoint(x: 0, y: 0)
+                loadingView?.frame.size = UIScreen.main.bounds.size
+                if loadingView != nil {
+                    view.addSubview(loadingView!)
+                }
+            }
+        } else {
+            //移除
+            loadingView?.removeFromSuperview()
+        }
     }
     
     func alert(title: String) {
@@ -95,9 +115,12 @@ class LoginViewController: UIViewController {
             alert(title: "請輸入密碼")
             return
         }
+        
+        setLoadingView(true)
         //Firebase
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             guard error == nil else {
+                self.setLoadingView(false)
                 if let errorInfo = error?.localizedDescription {
                     print("---登入失敗---\(errorInfo)")
                     self.alert(title: errorInfo)
@@ -126,12 +149,17 @@ class LoginViewController: UIViewController {
                 return
             }
             print("Google 登入成功")
-            
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
+            setLoadingView(true)
             //Firebase
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
+            
             Auth.auth().signIn(with: credential) { [weak self] result, error in
-                guard let self = self else { return }
+                guard let self = self else {
+                    self?.setLoadingView(false)
+                    return
+                }
                 guard error == nil else {
+                    self.setLoadingView(false)
                     self.alert(title: "\(error!.localizedDescription)")
                     return
                 }
@@ -167,12 +195,17 @@ extension LoginViewController: LoginButtonDelegate {
         guard let token = result?.token else { return }
         
         print("FB 登入成功")
+        setLoadingView(true)
         //Firebase
         let credential = FacebookAuthProvider.credential(withAccessToken: token.tokenString)
         
         Auth.auth().signIn(with: credential) { [weak self] result, error in
-            guard let self = self else { return }
+            guard let self = self else {
+                self?.setLoadingView(false)
+                return
+            }
             guard error == nil else {
+                self.setLoadingView(false)
                 print("Firebase 登入失敗 \(error!.localizedDescription)")
                 self.alert(title: "\(error!.localizedDescription)")
                 return

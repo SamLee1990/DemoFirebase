@@ -19,6 +19,7 @@
 		04B5CE3B26E4CA57008D9075 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B5CE3A26E4CA57008D9075 /* LoginViewController.swift */; };
 		04B5CE3D26E4CCE1008D9075 /* UserInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B5CE3C26E4CCE1008D9075 /* UserInfoViewController.swift */; };
 		04B5CE3F26E4D454008D9075 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B5CE3E26E4D454008D9075 /* RegisterViewController.swift */; };
+		04E21A7126EE0ED500C834A4 /* LoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 04E21A7026EE0ED500C834A4 /* LoadingView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		04B5CE3A26E4CA57008D9075 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		04B5CE3C26E4CCE1008D9075 /* UserInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoViewController.swift; sourceTree = "<group>"; };
 		04B5CE3E26E4D454008D9075 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		04E21A7026EE0ED500C834A4 /* LoadingView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadingView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				04B5CE3E26E4D454008D9075 /* RegisterViewController.swift */,
 				04B5CE3C26E4CCE1008D9075 /* UserInfoViewController.swift */,
 				04B5CE3A26E4CA57008D9075 /* LoginViewController.swift */,
+				04E21A7026EE0ED500C834A4 /* LoadingView.xib */,
 				04B5CE2A26E4AE88008D9075 /* Assets.xcassets */,
 				04B5CE2C26E4AE88008D9075 /* LaunchScreen.storyboard */,
 				04B5CE2F26E4AE88008D9075 /* Info.plist */,
@@ -153,6 +156,7 @@
 				04B5CE3626E4B4CC008D9075 /* GoogleService-Info.plist in Resources */,
 				04B5CE2B26E4AE88008D9075 /* Assets.xcassets in Resources */,
 				04B5CE2926E4AE86008D9075 /* Main.storyboard in Resources */,
+				04E21A7126EE0ED500C834A4 /* LoadingView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
