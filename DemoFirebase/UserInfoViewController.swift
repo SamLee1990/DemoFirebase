@@ -7,12 +7,15 @@
 
 import UIKit
 import Firebase
+import FBSDKLoginKit
+import GoogleSignIn
 
 class UserInfoViewController: UIViewController {
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var uidLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
+    @IBOutlet weak var imageView: UIImageView!
     
     //當用戶的登入狀態發生變化時會調用此 Listener
     var handle: AuthStateDidChangeListenerHandle?
@@ -29,18 +32,47 @@ class UserInfoViewController: UIViewController {
         handle = Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             print("---觸發監聽器---UserInfoViewController")
             guard let self = self else { return }
+            
             if let user = user {
-                //登入狀態
-                print("---登入狀態 email:\(user.email ?? " no email")")
-                self.nameLabel.text = user.displayName
+                print("---登入狀態 uid: \(user.uid)")
+                guard user.providerData.isEmpty == false else { return }
+                
+                var name: String?
+                var email: String?
+                var photoURL: URL?
+                
+                let providerInfo = user.providerData[0]
+                print("providerID = \(providerInfo.providerID)")
+                if providerInfo.providerID == "password" {
+                    name = user.displayName
+                    email = user.email
+                    photoURL = user.photoURL
+                } else {
+                    name = providerInfo.displayName
+                    email = providerInfo.email
+                    photoURL = providerInfo.photoURL
+                }
                 self.uidLabel.text = user.uid
-                self.emailLabel.text = user.email
+                self.nameLabel.text = name
+                self.emailLabel.text = email
+                if let photoURL = photoURL {
+                    URLSession.shared.dataTask(with: photoURL) { data, response, error in
+                        if let data = data,
+                           error == nil {
+                            DispatchQueue.main.async {
+                                self.imageView.image = UIImage(data: data)
+                            }
+                        } else {
+                            print("下載照片失敗 \(error!.localizedDescription)")
+                        }
+                    }.resume()
+                }
             } else {
-                //登出狀態
                 print("---登出狀態")
                 self.dismiss(animated: true, completion: nil)
             }
         }
+        
         
     }
     
@@ -50,6 +82,13 @@ class UserInfoViewController: UIViewController {
     }
     
     @IBAction func logOut(_ sender: Any) {
+        //Google
+        GIDSignIn.sharedInstance.signOut()
+        //Facebook
+        if let _ = AccessToken.current {
+            LoginManager().logOut()
+        }
+        //Firebase
         do {
             try Auth.auth().signOut()
         } catch {
@@ -58,10 +97,12 @@ class UserInfoViewController: UIViewController {
     }
     
     @IBAction func deleteUser(_ sender: Any) {
+        //Firebase
         guard let user = Auth.auth().currentUser else {
             print("---使用者未登入---")
             return
         }
+        
         user.delete { error in
             if let error = error {
                 print("---刪除失敗---\(error.localizedDescription)")
@@ -69,6 +110,7 @@ class UserInfoViewController: UIViewController {
                 print("---刪除成功---")
             }
         }
+        
     }
     
     

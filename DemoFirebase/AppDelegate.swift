@@ -7,6 +7,8 @@
 
 import UIKit
 import Firebase
+import FBSDKCoreKit
+import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,8 +21,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Firebase
         FirebaseApp.configure()
         
+        //Facebook
+        ApplicationDelegate.shared.application(
+            application,
+            didFinishLaunchingWithOptions: launchOptions
+        )
+        
         return true
     }
+    
+    //Facebook & Google
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        var handled: Bool
+        //Facebook
+        handled = ApplicationDelegate.shared.application(
+            app,
+            open: url,
+            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
+        )
+        if handled {
+            return true
+        }
+        //Google
+        handled = GIDSignIn.sharedInstance.handle(url)
+        if handled {
+            return true
+        }
+        
+        return false
+    }
+    
+    
 
     // MARK: UISceneSession Lifecycle
 
